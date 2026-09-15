@@ -8,41 +8,45 @@
 
 **Path:** _StreamLine Spotlight (B2C) · RouteLogic Velocity (B2B) · my own initiative_
 
-_One line on why you picked it._
+I was interested in picking B2C since I usually work in B2B and this is more focused on value delivery.
 
 ## 2. The strategic crisis
 
 _The big-picture business risk. If the company does nothing for 12 months, what happens to its market position?_
 
-> If we do nothing for 12 months, the company will…
+For years, StreamLine's competitive advantage came from having the largest content library in the market. However, as the catalog has grown beyond 15,000 titles, user engagement has plateaued and subscriber churn has increased. Competitors with smaller, curated libraries are winning loyal viewers by helping them discover high-quality content faster. StreamLine now faces a strategic dilemma: its strength in scale is becoming a weakness in discovery.
 
 ## 3. The moment of misery
 
 _The specific point where the product fails the user, forcing a manual workaround (Google, spreadsheets, group texts, a competitor)._
 
-> The user is currently forced to…
+A long-time subscriber opens StreamLine looking for something meaningful to watch. After scrolling through hundreds of recommendations and familiar titles for fifteen minutes, they feel overwhelmed rather than inspired. Unable to confidently choose something new, they leave the app or return to a competitor known for thoughtful curation and discovery.
 
 ## 4. Problem hook
 
 _One urgent sentence fusing the business risk and the user pain, your pitch for why this is the most important thing to work on right now._
 
-> We must solve [business risk] by addressing [user pain]…
+When customers have too many choices and too little guidance, more content does not create more value. StreamLine has optimized for volume, but its most engaged viewers increasingly want trusted recommendations, expert curation, and a sense that great films can be discovered without endless searching. If StreamLine cannot improve discovery, it risks losing its highest-value audience despite having the largest catalog in the market.
 
 ## 5. Value proposition
 
 _Who it's for, the new value, and why it's urgent to launch now._
 
-> For **[who]**, we will **[value]** because **[urgent why]**.
+**StreamLine Spotlight** is a premium curated experience within StreamLine that helps film enthusiasts discover exceptional content through expert collections, editorial recommendations, themed programming, and a carefully selected viewing journey. By combining the scale of StreamLine's library with the trust and simplicity of human-centered curation, Spotlight enables viewers to spend less time searching and more time watching content they love.
 
 ## 6. Cold-read self-review
-
-_Read your hook back as a skeptical stakeholder. If you don't feel the urgency, that's your data._
+- Clearly identifies the business problem: declining engagement and rising churn despite library growth.
+- Focuses on a specific target audience: discovery-oriented, high-value viewers.
+- Connects customer frustration directly to a measurable business risk.
+- Defines how Spotlight is differentiated from the core StreamLine experience.
+- Explains the value in one sentence: better discovery without sacrificing scale.
+- Could be strengthened further with quantitative evidence around churn, watch time, or discovery satisfaction metrics.
 
 | Question | Your answer |
 |---|---|
-| Is the business risk high-stakes enough to justify a new initiative? | _____ |
-| Is the moment of misery systemic, or just an edge case? | _____ |
-| Does the value proposition actually remove the obstacle? | _____ |
+| Is the business risk high-stakes enough to justify a new initiative? | Yes |
+| Is the moment of misery systemic, or just an edge case? | Systemic |
+| Does the value proposition actually remove the obstacle? | Not sure yet |
 
 ## 7. Finalized hypothesis _(complete in Module 3)_
 
