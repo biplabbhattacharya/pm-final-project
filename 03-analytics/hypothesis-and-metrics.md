@@ -6,7 +6,7 @@
 
 ## Finalized product hypothesis
 
-> Based on [qual + quant evidence], I believe that [solving X] for [persona] will result in [outcome], as measured by a [X%] change in [success metric]. I will protect [guardrail metric] and make a go/no-go decision after [decision window].
+Based on users leaving the platform after browsing and not converting to power users, I believe that curating the catalog of titles for users that struggle with navigating a massive library will result in increased engagement and user retention, as measured by a 15% change in retention for users using spotlight. I will protect power user levels and will make a go/no-go decision after working on the spotlight program.
 
 ## Success metrics
 
