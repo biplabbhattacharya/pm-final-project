@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>StreamLine Spotlight Roadmap</title>
+<style>
+  :root {
+    --navy: #0b1f3a;
+    --blue: #1d4ed8;
+    --ink: #1e293b;
+    --muted: #64748b;
+    --line: #e2e8f0;
+    --bg: #f5f7fb;
+    --card: #ffffff;
+
+    --qw: #15803d;  --qw-bg: #dcfce7;
+    --mp: #1d4ed8;  --mp-bg: #dbeafe;
+    --fi: #b45309;  --fi-bg: #fef3c7;
+    --ts: #b91c1c;  --ts-bg: #fee2e2;
+
+    --now: #1d4ed8;
+    --next: #0891b2;
+    --later: #64748b;
+    --cut: #b91c1c;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.45;
+  }
+
+  /* Header */
+  header {
+    background: linear-gradient(120deg, var(--navy) 0%, #13315c 100%);
+    color: #fff;
+    padding: 28px 40px 24px;
+  }
+  .brand-row {
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 16px;
+  }
+  .brand { display: flex; align-items: center; gap: 14px; }
+  .logo {
+    width: 44px; height: 44px; border-radius: 10px;
+    background: #fff; display: grid; place-items: center;
+  }
+  .logo svg { width: 24px; height: 24px; }
+  h1 { margin: 0; font-size: 24px; font-weight: 700; letter-spacing: .2px; }
+  h1 span { font-weight: 400; opacity: .8; }
+  .sub { margin: 2px 0 0; font-size: 13px; opacity: .8; }
+  .team {
+    display: flex; gap: 8px; flex-wrap: wrap;
+  }
+  .pill {
+    background: rgba(255,255,255,.12);
+    border: 1px solid rgba(255,255,255,.25);
+    padding: 6px 12px; border-radius: 999px; font-size: 13px;
+  }
+
+  /* Toolbar */
+  .toolbar {
+    display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between;
+    padding: 16px 40px; background: #fff; border-bottom: 1px solid var(--line);
+    position: sticky; top: 0; z-index: 10;
+  }
+  .filters { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  .filters .label { font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .6px; margin-right: 4px; }
+  .chip {
+    border: 1px solid var(--line); background: #fff; color: var(--ink);
+    padding: 6px 12px; border-radius: 999px; font-size: 13px; cursor: pointer;
+    display: inline-flex; align-items: center; gap: 6px; transition: all .15s;
+  }
+  .chip .dot { width: 9px; height: 9px; border-radius: 50%; }
+  .chip:hover { border-color: #94a3b8; }
+  .chip.active { background: var(--navy); color: #fff; border-color: var(--navy); }
+  .tools { display: flex; gap: 8px; align-items: center; }
+  .search {
+    border: 1px solid var(--line); border-radius: 8px; padding: 7px 12px; font-size: 13px; width: 220px;
+    font-family: inherit;
+  }
+  .search:focus { outline: 2px solid #bfdbfe; border-color: var(--blue); }
+  .btn {
+    border: 1px solid var(--line); background: #fff; padding: 7px 12px; border-radius: 8px;
+    font-size: 13px; cursor: pointer; font-family: inherit; color: var(--ink);
+  }
+  .btn:hover { background: #f1f5f9; }
+
+  main { padding: 24px 40px 48px; max-width: 1400px; margin: 0 auto; }
+
+  .hint { font-size: 12.5px; color: var(--muted); margin: 0 0 16px; }
+
+  /* Lanes */
+  .lanes {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
+  }
+  .lane {
+    background: #eef2f8; border-radius: 14px; padding: 14px; min-height: 260px;
+    border: 2px dashed transparent; transition: border-color .15s, background .15s;
+    display: flex; flex-direction: column;
+  }
+  .lane.drag-over { border-color: var(--blue); background: #e0eaff; }
+  .lane-head {
+    display: flex; align-items: flex-start; justify-content: space-between;
+    padding: 4px 6px 12px; border-bottom: 3px solid var(--lane-color);
+    margin-bottom: 14px;
+  }
+  .lane-title { font-size: 16px; font-weight: 800; letter-spacing: 1px; color: var(--lane-color); }
+  .lane-sub { font-size: 12.5px; color: var(--muted); margin-top: 2px; }
+  .count {
+    background: var(--lane-color); color: #fff; font-size: 12px; font-weight: 700;
+    min-width: 26px; height: 26px; border-radius: 13px; display: grid; place-items: center; padding: 0 8px;
+  }
+  .lane[data-lane="now"]   { --lane-color: var(--now); }
+  .lane[data-lane="next"]  { --lane-color: var(--next); }
+  .lane[data-lane="later"] { --lane-color: var(--later); }
+  .lane[data-lane="cut"]   { --lane-color: var(--cut); }
+
+  .cards { display: flex; flex-direction: column; gap: 12px; flex: 1; }
+
+  /* Cards */
+  .card {
+    background: var(--card); border-radius: 10px; padding: 14px 16px;
+    border: 1px solid var(--line); border-left: 4px solid var(--q-color);
+    box-shadow: 0 1px 2px rgba(15,23,42,.05);
+    cursor: grab; transition: box-shadow .15s, transform .15s, opacity .15s;
+  }
+  .card:hover { box-shadow: 0 6px 16px rgba(15,23,42,.10); transform: translateY(-1px); }
+  .card.dragging { opacity: .45; }
+  .card.hidden { display: none; }
+  .card[data-q="qw"] { --q-color: var(--qw); --q-bg: var(--qw-bg); }
+  .card[data-q="mp"] { --q-color: var(--mp); --q-bg: var(--mp-bg); }
+  .card[data-q="fi"] { --q-color: var(--fi); --q-bg: var(--fi-bg); }
+  .card[data-q="ts"] { --q-color: var(--ts); --q-bg: var(--ts-bg); }
+
+  .card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+  .card-id { font-size: 11.5px; font-weight: 700; color: var(--muted); letter-spacing: .5px; }
+  .card-name { font-size: 15px; font-weight: 700; margin: 2px 0 0; color: var(--ink); }
+  .badge {
+    white-space: nowrap; font-size: 11.5px; font-weight: 700;
+    color: var(--q-color); background: var(--q-bg);
+    padding: 4px 9px; border-radius: 999px;
+  }
+  .rationale {
+    font-size: 13.5px; color: #334155; margin: 10px 0 0;
+  }
+  .card.collapsed .rationale { display: none; }
+  .card-foot {
+    display: flex; justify-content: space-between; align-items: center; margin-top: 10px;
+  }
+  .scores { display: flex; gap: 6px; }
+  .score {
+    font-size: 11.5px; color: var(--muted); background: #f1f5f9; border-radius: 6px; padding: 3px 7px;
+  }
+  .score b { color: var(--ink); }
+  .toggle {
+    font-size: 12px; color: var(--blue); background: none; border: none; cursor: pointer; padding: 0;
+    font-family: inherit;
+  }
+  .toggle:hover { text-decoration: underline; }
+
+  .empty {
+    font-size: 13px; color: #94a3b8; text-align: center; padding: 24px 10px;
+    border: 1px dashed #cbd5e1; border-radius: 10px;
+  }
+
+  /* Cut list */
+  .cut-wrap { margin-top: 28px; }
+  .lane.cut { min-height: 160px; background: #fbeeee; }
+  .lane.cut.drag-over { background: #fde2e2; border-color: var(--cut); }
+  .lane.cut .cards {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 12px;
+  }
+  .lane.cut .card { background: #fff; }
+  .lane.cut .card-name { text-decoration: line-through; text-decoration-color: rgba(185,28,28,.5); }
+
+  /* Legend */
+  .legend {
+    margin-top: 28px; background: #fff; border: 1px solid var(--line); border-radius: 12px;
+    padding: 16px 20px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;
+  }
+  .legend-item { display: flex; gap: 10px; align-items: flex-start; font-size: 13px; }
+  .legend-item .badge { flex-shrink: 0; }
+  .legend-item[data-q="qw"] { --q-color: var(--qw); --q-bg: var(--qw-bg); }
+  .legend-item[data-q="mp"] { --q-color: var(--mp); --q-bg: var(--mp-bg); }
+  .legend-item[data-q="fi"] { --q-color: var(--fi); --q-bg: var(--fi-bg); }
+  .legend-item[data-q="ts"] { --q-color: var(--ts); --q-bg: var(--ts-bg); }
+  .legend-item span.desc { color: var(--muted); }
+
+  footer { text-align: center; font-size: 12px; color: var(--muted); padding: 0 0 28px; }
+
+  @media (max-width: 960px) {
+    header, .toolbar, main { padding-left: 18px; padding-right: 18px; }
+    .lanes { grid-template-columns: 1fr; }
+    .legend { grid-template-columns: 1fr 1fr; }
+    .search { width: 100%; }
+    .tools { width: 100%; }
+  }
+  @media print {
+    .toolbar, .hint, .toggle { display: none !important; }
+    body { background: #fff; }
+    .card { box-shadow: none; break-inside: avoid; }
+    .card.collapsed .rationale { display: block; }
+    .card.hidden { display: block; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand-row">
+    <div class="brand">
+      <div class="logo" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none">
+          <circle cx="12" cy="12" r="10" stroke="#1d4ed8" stroke-width="2"/>
+          <path d="M10 8l6 4-6 4V8z" fill="#1d4ed8"/>
+        </svg>
+      </div>
+      <div>
+        <h1>StreamLine <span>Spotlight</span></h1>
+        <p class="sub">Product Roadmap</p>
+      </div>
+    </div>
+    <div class="team">
+      <div class="pill">Team: 2 engineers + 1 designer</div>
+      <div class="pill">Sprint: 3 weeks</div>
+    </div>
+  </div>
+</header>
+
+<div class="toolbar">
+  <div class="filters" id="filters">
+    <span class="label">Quadrant</span>
+    <button class="chip active" data-filter="all">All</button>
+    <button class="chip" data-filter="qw"><span class="dot" style="background:var(--qw)"></span>Quick Win</button>
+    <button class="chip" data-filter="mp"><span class="dot" style="background:var(--mp)"></span>Major Project</button>
+    <button class="chip" data-filter="fi"><span class="dot" style="background:var(--fi)"></span>Fill-In</button>
+    <button class="chip" data-filter="ts"><span class="dot" style="background:var(--ts)"></span>Time Sinker</button>
+  </div>
+  <div class="tools">
+    <input class="search" id="search" type="search" placeholder="Search features...">
+    <button class="btn" id="expandAll">Collapse all</button>
+    <button class="btn" id="reset">Reset</button>
+  </div>
+</div>
+
+<main>
+  <p class="hint">Drag cards between lanes to explore trade-offs. Click Reset to restore the finalized plan.</p>
+
+  <section class="lanes">
+    <div class="lane" data-lane="now">
+      <div class="lane-head">
+        <div>
+          <div class="lane-title">NOW</div>
+          <div class="lane-sub">3-week sprint</div>
+        </div>
+        <div class="count" data-count="now">0</div>
+      </div>
+      <div class="cards" data-drop="now"></div>
+    </div>
+
+    <div class="lane" data-lane="next">
+      <div class="lane-head">
+        <div>
+          <div class="lane-title">NEXT</div>
+          <div class="lane-sub">Following 1-2 sprints</div>
+        </div>
+        <div class="count" data-count="next">0</div>
+      </div>
+      <div class="cards" data-drop="next"></div>
+    </div>
+
+    <div class="lane" data-lane="later">
+      <div class="lane-head">
+        <div>
+          <div class="lane-title">LATER</div>
+          <div class="lane-sub">Backlog</div>
+        </div>
+        <div class="count" data-count="later">0</div>
+      </div>
+      <div class="cards" data-drop="later"></div>
+    </div>
+  </section>
+
+  <section class="cut-wrap">
+    <div class="lane cut" data-lane="cut">
+      <div class="lane-head">
+        <div>
+          <div class="lane-title">CUT LIST</div>
+          <div class="lane-sub">Not pursuing for Spotlight</div>
+        </div>
+        <div class="count" data-count="cut">0</div>
+      </div>
+      <div class="cards" data-drop="cut"></div>
+    </div>
+  </section>
+
+  <section class="legend">
+    <div class="legend-item" data-q="qw"><span class="badge">Quick Win</span><span class="desc">High value, low effort</span></div>
+    <div class="legend-item" data-q="mp"><span class="badge">Major Project</span><span class="desc">High value, high effort</span></div>
+    <div class="legend-item" data-q="fi"><span class="badge">Fill-In</span><span class="desc">Low value, low effort</span></div>
+    <div class="legend-item" data-q="ts"><span class="badge">Time Sinker</span><span class="desc">Low value, high effort</span></div>
+  </section>
+</main>
+
+<footer>StreamLine Spotlight · Effort vs. Value prioritization</footer>
+
+<script>
+  const QUADRANTS = {
+    qw: "Quick Win",
+    mp: "Major Project",
+    fi: "Fill-In",
+    ts: "Time Sinker"
+  };
+
+  const FEATURES = [
+    { id: "A1", name: "Spotlight Curated Rail", q: "qw", value: 5, effort: 2, lane: "now",
+      rationale: "This rail is the Spotlight treatment that drives the 12–15 point Month 1 lift. It shrinks the catalog right at the Moment of Misery, and it can reuse existing rail components." },
+
+    { id: "A2", name: "'Why You'll Love This' Label", q: "mp", value: 4, effort: 3, lane: "next",
+      rationale: "It targets decision paralysis directly. But hover doesn't exist on mobile, so as written it misses half the Wanderer's sessions. AI-generated reasons also add effort." },
+    { id: "A5", name: "Personalized Spotlight Queue", q: "mp", value: 4, effort: 5, lane: "next",
+      rationale: "It fits the persona well and could carry progress across devices. But new users in Month 0 have thin taste profiles, so the AI is weakest where the leak is. Too heavy for 3 weeks." },
+
+    { id: "A3", name: "Hidden Gem Badge", q: "fi", value: 2, effort: 1, lane: "later",
+      rationale: "It's cheap, since it's just a metadata rule. But it adds a signal without reducing choices, so it does little for the Month 0 to Month 1 leak." },
+    { id: "A6", name: "Spotlight Digest Email", q: "fi", value: 2, effort: 2, lane: "later",
+      rationale: "It could win back users after they leave. It happens outside the app, though, so it doesn't fix the browsing friction that drives them away." },
+
+    { id: "A4", name: "Mood-Based Entry Point", q: "ts", value: 3, effort: 3, lane: "cut",
+      rationale: "It narrows choice, but it puts a gate in front of content at login, which adds friction in exactly the Month 0 window. It also needs mood tags across the catalog." },
+    { id: "A7", name: "Curator Profiles", q: "ts", value: 2, effort: 4, lane: "cut",
+      rationale: "It adds a social layer and more things to follow and browse. That's the opposite of fewer, clearer choices." },
+    { id: "A8", name: "Watch Party (Spotlight)", q: "ts", value: 1, effort: 5, lane: "cut",
+      rationale: "It doesn't touch choice overload or resuming across devices, and synchronized playback plus chat is heavy engineering." },
+    { id: "A9", name: "Advanced Filter Engine", q: "ts", value: 1, effort: 3, lane: "cut",
+      rationale: "This is a power-user tool for searching the full library. It works against the Spotlight idea by giving the Wanderer more controls and more options." },
+    { id: "A10", name: "Offline Download (Spotlight)", q: "ts", value: 2, effort: 5, lane: "cut",
+      rationale: "It's a mobile convenience, but it doesn't solve choice or sync. Licensing and DRM rights make it expensive." }
+  ];
+
+  const STORAGE_KEY = "streamline-spotlight-roadmap-v1";
+  const LANES = ["now", "next", "later", "cut"];
+  let state = loadState();
+  let activeFilter = "all";
+  let searchTerm = "";
+  let allCollapsed = false;
+  let draggedId = null;
+
+  function defaultState() {
+    return FEATURES.reduce((acc, f) => { acc[f.id] = f.lane; return acc; }, {});
+  }
+  function loadState() {
+    try {
+      const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+      if (saved && typeof saved === "object") return Object.assign(defaultState(), saved);
+    } catch (e) {}
+    return defaultState();
+  }
+  function saveState() {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (e) {}
+  }
+
+  function escapeHTML(s) {
+    return s.replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  }
+
+  function cardHTML(f) {
+    return `
+      <article class="card${allCollapsed ? " collapsed" : ""}" draggable="true" data-id="${f.id}" data-q="${f.q}">
+        <div class="card-top">
+          <div>
+            <div class="card-id">${f.id}</div>
+            <h3 class="card-name">${escapeHTML(f.name)}</h3>
+          </div>
+          <span class="badge">${QUADRANTS[f.q]}</span>
+        </div>
+        <p class="rationale">${escapeHTML(f.rationale)}</p>
+        <div class="card-foot">
+          <div class="scores">
+            <span class="score">Value <b>${f.value}</b>/5</span>
+            <span class="score">Effort <b>${f.effort}</b>/5</span>
+          </div>
+          <button class="toggle" type="button">${allCollapsed ? "Show rationale" : "Hide rationale"}</button>
+        </div>
+      </article>`;
+  }
+
+  function render() {
+    LANES.forEach(lane => {
+      const container = document.querySelector(`[data-drop="${lane}"]`);
+      const items = FEATURES.filter(f => state[f.id] === lane);
+      container.innerHTML = items.length
+        ? items.map(cardHTML).join("")
+        : `<div class="empty">Drop a feature here</div>`;
+      document.querySelector(`[data-count="${lane}"]`).textContent = items.length;
+    });
+    bindCards();
+    applyFilters();
+  }
+
+  function applyFilters() {
+    document.querySelectorAll(".card").forEach(card => {
+      const f = FEATURES.find(x => x.id === card.dataset.id);
+      const matchQ = activeFilter === "all" || f.q === activeFilter;
+      const hay = (f.id + " " + f.name + " " + f.rationale).toLowerCase();
+      const matchS = !searchTerm || hay.includes(searchTerm);
+      card.classList.toggle("hidden", !(matchQ && matchS));
+    });
+  }
+
+  function bindCards() {
+    document.querySelectorAll(".card").forEach(card => {
+      card.addEventListener("dragstart", e => {
+        draggedId = card.dataset.id;
+        card.classList.add("dragging");
+        e.dataTransfer.effectAllowed = "move";
+        e.dataTransfer.setData("text/plain", draggedId);
+      });
+      card.addEventListener("dragend", () => {
+        card.classList.remove("dragging");
+        document.querySelectorAll(".lane").forEach(l => l.classList.remove("drag-over"));
+      });
+      card.querySelector(".toggle").addEventListener("click", e => {
+        e.stopPropagation();
+        card.classList.toggle("collapsed");
+        e.target.textContent = card.classList.contains("collapsed") ? "Show rationale" : "Hide rationale";
+      });
+    });
+  }
+
+  document.querySelectorAll(".lane").forEach(lane => {
+    lane.addEventListener("dragover", e => { e.preventDefault(); lane.classList.add("drag-over"); });
+    lane.addEventListener("dragleave", e => {
+      if (!lane.contains(e.relatedTarget)) lane.classList.remove("drag-over");
+    });
+    lane.addEventListener("drop", e => {
+      e.preventDefault();
+      lane.classList.remove("drag-over");
+      const id = e.dataTransfer.getData("text/plain") || draggedId;
+      if (!id) return;
+      state[id] = lane.dataset.lane;
+      saveState();
+      render();
+    });
+  });
+
+  document.getElementById("filters").addEventListener("click", e => {
+    const btn = e.target.closest(".chip");
+    if (!btn) return;
+    document.querySelectorAll(".chip").forEach(c => c.classList.remove("active"));
+    btn.classList.add("active");
+    activeFilter = btn.dataset.filter;
+    applyFilters();
+  });
+
+  document.getElementById("search").addEventListener("input", e => {
+    searchTerm = e.target.value.trim().toLowerCase();
+    applyFilters();
+  });
+
+  document.getElementById("expandAll").addEventListener("click", e => {
+    allCollapsed = !allCollapsed;
+    e.target.textContent = allCollapsed ? "Expand all" : "Collapse all";
+    render();
+  });
+
+  document.getElementById("reset").addEventListener("click", () => {
+    state = defaultState();
+    saveState();
+    activeFilter = "all";
+    searchTerm = "";
+    document.getElementById("search").value = "";
+    document.querySelectorAll(".chip").forEach(c => c.classList.toggle("active", c.dataset.filter === "all"));
+    render();
+  });
+
+  render();
+</script>
+</body>
+</html>
