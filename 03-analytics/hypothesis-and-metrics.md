@@ -1,17 +1,29 @@
-# Hypothesis & Success Metrics
+# Hypothesis & Success Metrics (Module 3)
 
-> **Module 3 · ★ Deliverable 3.** Repo file `03-analytics/hypothesis-and-metrics.md` — part of your submission.
-> Do the lab in the **Module 3 · Exercise Guide** (linked from the Module 3 deck), then click **⬇ Download .md** — it saves as this exact file. Commit it here.
-> It feeds the **Problem, Value & Hypothesis** slide of your Module 6 final deck.
+## Pre-work · Hypothesis check
+- **Role , who you are solving for (from M2):** Priya, a 34-year-old subscriber with 14 years of tenure, one of StreamLine's most loyal, long-standing viewers
+- **Goal , what this user is ultimately trying to achieve:** This user is trying to find something interesting to watch instead of being inundated by options
+- **Friction / moment of misery , the specific pain blocking their goal:** The user leaves after browsing for 20 minutes. I also want to consider a bug, which doesn't sync watchlists between mobile and TV. These can both lead to user frustration and lower retention.
+- **Current workaround , the external tool or manual process they rely on (M2):** She just goes back to picking a DVD
+- **Problem Hook , your one-sentence framing of the business crisis (M1):** When customers have too many choices and too little guidance, more content does not create more value. StreamLine has optimized for volume, but its most engaged viewers increasingly want trusted recommendations, expert curation, and a sense that great films can be discovered without endless searching. If StreamLine cannot improve discovery, it risks losing its highest-value audience despite having the largest catalog in the market.
+- **Value Proposition , the outcome your initiative promised to deliver (M1):** StreamLine Spotlight is a premium curated experience within StreamLine that helps film enthusiasts discover exceptional content through expert collections, editorial recommendations, themed programming, and a carefully selected viewing journey. By combining the scale of StreamLine's library with the trust and simplicity of human-centered curation, Spotlight enables viewers to spend less time searching and more time watching content they love.
 
-## Finalized product hypothesis
+## Read your data snapshots
+- **Does the funnel data confirm your M2 friction point, or does it tell a different story? Note where the numbers align with the qualitative pain you found and where they diverge.:** Yes, only 11% of visitors reach 30+ min session. As seen by Priya leaving at the 20 min mark.
+- **Do the retention patterns align with the workaround your M2 persona used to find content? Note what the Mo. 0→1 drop suggests about the onboarding experience your persona described as frustrating.:** Yes. Spotlight cohorts retain 12 to 15 points higher at Month 1 than Full-Library cohorts. The Month 0 → Month 1 drop remains the single largest leak regardless of cohort type - this may be attributed to bugs in the software and the too many choices of titles. Spotlight did improve Month 0 to Month 1 conversion by about 10-15 points.
+- **Does the LTV gap and the content mix (61% trending for Wanderers) confirm the moment of misery your persona described? Note which segment your persona is in and whether the data confirms their pain.:** Yes. Power users prefer the curated and trending mix. My persona is either in the Casual browser or Wanderer category - both of which show improvement if spotlight-exposed. If wanderers can be converted to Casual browers or power users, it will improve the overall LTV distribution.
+- **Does the low adoption confirm your persona is burdened by tools they don’t use? Note whether the low scheduling adoption (42%) for coordinators matches your M2 moment of misery.:** _(not filled in)_
+- **Does the workflow data match the manual process or hack you documented in M2? Note whether the specific drop-offs or time gaps explain why your persona avoids the digital tool.:** _(not filled in)_
+- **Look at the CSAT heatmap. Which specific cell most directly maps to your persona’s friction? Note how the NPS trend justifies the urgency of your M1 Problem Hook.:** _(not filled in)_
 
-Based on users leaving the platform after browsing and not converting to power users, I believe that curating the catalog of titles for users that struggle with navigating a massive library will result in increased engagement and user retention, as measured by a 15% change in retention for users using spotlight. I will protect power user levels and will make a go/no-go decision after working on the spotlight program.
+## Step 3 · Craft your hypothesis
+- **Qualitative evidence (from M2) , quote the specific friction / moment of misery for your persona:** potlight cohorts retain 12 to 15 points higher at Month 1 than Full-Library cohorts. But the Month 0 → Month 1 drop remains the single largest leak regardless of cohort type.
+- **Quantitative evidence (from M3) , name the metric or data point that confirms the pain; cite the number:** Only 11% of visitors reach a 30+ minute session
+- **Persona , role, goal, and the friction you confirmed in the reconciliation steps:** The persona we are solving for is the user that has way to many options to choose from and for whom the software does not sync clearly between mobile and desktop. This creates a lot of friction with not able to select new titles or resume progress between platforms.
+- **Problem you are solving , one sentence describing the specific friction this initiative removes:** Spotlight creates a better product with curated library for users. This will reduce the churn of users who browse the product's massive library and give up because they are not able to find something to watch.
+- **Strategic outcome , what behaviour change do you expect, and how does it map to retention / revenue / churn?:** I expect number of casual watchers and power users to increase. Both groups are linked with higher retention, revenue and lower churn.
+- **Primary success metric (initiative signal) , the leading indicator that tells you the gap is closing:** Spotlight cohorts retain 12 to 15 points higher at Month 1 than Full-Library cohorts.
+- **Guardrail metric (product signal) , the metric that must NOT drop; it protects your existing base:** Number of power users must not drop
+- **Decision window , how much time or data before you scale, pivot, or kill? minimum threshold to proceed?:** Currently spotlight is at 18% of users. I would expand to 50% and analyze if the trends hold. If spotlight continues to improve retention, and reduce churn, then scale to 100%
+- **Draft your full hypothesis sentence , one to three sentences; quote the metric, name the persona, name the outcome:** Based on users leaving the platform after browsing and not converting to power users, I believe that curating the catalog of titles for users that struggle with navigating a massive library will result in increased engagement and user retention, as measured by a 15% change in retention for users using spotlight. The program should protect power user levels and will make a go/no-go decision after working on the spotlight program.
 
-## Success metrics
-
-| Metric | Type | Target | Why it matters |
-|---|---|---|---|
-| _North-star_ | | _____ | _____ |
-| _Leading indicator_ | | _____ | _____ |
-| _Guardrail_ | | _____ | _____ |
