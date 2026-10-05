@@ -6,18 +6,15 @@
 
 ## Friction points
 
-_The biggest technical or strategic challenge you faced while developing your product concept._
-
+> It was hard to decide the right persona to solve for and the right primary metric to design for.
 _____
 
 ## Key learnings
 
-_A few surprising discoveries or insights you gained from the course overall._
-
+>It was surprising how many times I double/triple checked if the persona, primary metric, guardrail metric was what I want to develop for.
 _____
 
 ## Aha! moment
 
-_Your main "aha" moment during the project process._
-
+> The Aha! moment happened when I realized that one feature doesn't have to solve all problems, I just need to decide my feature based on persona, primary metric, guardrail metric and then revisit this to find other features that solve other issues.
 _____
