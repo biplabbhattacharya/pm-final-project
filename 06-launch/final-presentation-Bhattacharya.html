@@ -1,0 +1,528 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>StreamLine Spotlight, A Personalised Discovery Rail · Final Project</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Saans:wght@400;600;700;800;900&family=Antarctican+Mono:wght@400;500&family=Inter:wght@400;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#07162C; --fg:#ffffff; --muted:#ffffff;
+  --orange:#fb923c; --cyan:#22d3ee; --teal:#34d399; --blue:#60a5fa; --violet:#a78bfa; --pink:#f472b6;
+  --eyebrow:#fdba74;
+  --border:rgba(251,146,60,0.25);
+  --card:rgba(255,255,255,0.035);
+  --head:'Saans','Inter',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --body:'Saans','Inter',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --mono:'Antarctican Mono','JetBrains Mono',ui-monospace,'SFMono-Regular',Menlo,monospace;
+  --pad-x:clamp(28px,6vw,96px);
+  --pad-y:clamp(28px,6.5vh,72px);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-snap-type:y mandatory;scroll-behavior:smooth;background:var(--bg)}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-weight:400;line-height:1.5;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit}
+
+/* Progress + dots */
+#progress{position:fixed;top:0;left:0;height:3px;width:0;z-index:50;background:linear-gradient(90deg,var(--orange),var(--pink) 50%,var(--cyan));box-shadow:0 0 12px rgba(251,146,60,.6);transition:width .12s linear}
+#dots{position:fixed;right:clamp(12px,1.8vw,28px);top:50%;transform:translateY(-50%);z-index:40;display:flex;flex-direction:column;gap:14px}
+#dots a{position:relative;display:block;width:10px;height:10px;border-radius:50%;border:1px solid rgba(253,186,116,.6);background:transparent;transition:all .25s}
+#dots a:hover,#dots a.active{background:var(--orange);border-color:var(--orange);box-shadow:0 0 0 4px rgba(251,146,60,.18)}
+#dots a span{position:absolute;right:20px;top:50%;transform:translateY(-50%);white-space:nowrap;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--eyebrow);opacity:0;pointer-events:none;transition:opacity .2s;background:rgba(7,22,44,.9);padding:4px 8px;border-radius:6px;border:1px solid var(--border)}
+#dots a:hover span{opacity:1}
+#hint{position:fixed;left:var(--pad-x);bottom:16px;z-index:40;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.55)}
+#hint kbd{font-family:var(--mono);border:1px solid var(--border);border-radius:4px;padding:1px 5px;margin:0 2px;color:var(--eyebrow)}
+
+/* Sections */
+section{min-height:100vh;height:100vh;scroll-snap-align:start;scroll-snap-stop:always;position:relative;padding:var(--pad-y) calc(var(--pad-x) + 24px) var(--pad-y) var(--pad-x);display:flex;flex-direction:column;overflow:hidden}
+section::before{content:"";position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(900px 500px at 92% -10%,rgba(251,146,60,.10),transparent 60%),radial-gradient(700px 500px at -10% 110%,rgba(34,211,238,.08),transparent 60%)}
+section > *{position:relative}
+.slide-head{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;margin-bottom:clamp(14px,2.6vh,28px)}
+.eyebrow{font-family:var(--mono);font-weight:500;text-transform:uppercase;letter-spacing:.12em;color:var(--eyebrow);font-size:clamp(11px,1.5vh,13px)}
+h1,h2,h3{font-family:var(--head);letter-spacing:-.015em;line-height:1.08}
+h2{font-weight:800;font-size:clamp(28px,5vh,48px);margin-top:6px}
+h3{font-weight:700;font-size:clamp(16px,2.3vh,21px);margin-bottom:8px}
+.slide-no{font-family:var(--mono);font-size:clamp(11px,1.5vh,13px);letter-spacing:.12em;color:rgba(255,255,255,.55);text-transform:uppercase;white-space:nowrap}
+p{font-size:clamp(14px,2.05vh,18px);color:var(--muted)}
+.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:clamp(16px,2.6vh,26px)}
+.card.hero{background:linear-gradient(145deg,rgba(251,146,60,.14),rgba(244,114,182,.06) 55%,rgba(7,22,44,.4));box-shadow:0 18px 40px -18px rgba(0,0,0,.6),0 0 0 1px rgba(251,146,60,.08) inset}
+.card.key{box-shadow:0 14px 34px -16px rgba(0,0,0,.7)}
+.label{font-family:var(--mono);font-size:clamp(10px,1.4vh,12px);letter-spacing:.12em;text-transform:uppercase;color:var(--eyebrow);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.label i{display:inline-block;width:8px;height:8px;border-radius:2px;background:var(--orange)}
+.grow{flex:1;min-height:0}
+.grid{display:grid;gap:clamp(12px,2vh,22px)}
+
+/* Buttons + pills */
+.btn{display:inline-flex;align-items:center;gap:10px;font-family:var(--head);font-weight:700;font-size:clamp(13px,1.9vh,16px);text-decoration:none;padding:12px 20px;border-radius:999px;background:var(--orange);color:#07162C;box-shadow:0 10px 24px -10px rgba(251,146,60,.8);transition:transform .15s,box-shadow .15s}
+.btn:hover{transform:translateY(-2px);box-shadow:0 14px 30px -10px rgba(251,146,60,.9)}
+.btn.ghost{background:transparent;color:var(--fg);border:1px solid var(--border);box-shadow:none}
+.btn.ghost:hover{border-color:var(--orange)}
+.btn svg{width:16px;height:16px}
+.pill{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:clamp(11px,1.55vh,13px);letter-spacing:.04em;padding:7px 12px;border-radius:999px;border:1px solid var(--border);background:rgba(255,255,255,.04)}
+.pill .d{width:7px;height:7px;border-radius:50%}
+.url{font-family:var(--mono);font-size:clamp(11px,1.55vh,13px);word-break:break-all;text-decoration:none;border-bottom:1px dashed rgba(253,186,116,.5)}
+.url:hover{color:var(--eyebrow)}
+
+/* Cover */
+#cover{justify-content:center}
+#cover::after{content:"";position:absolute;right:-8vw;top:-10vh;width:55vw;height:55vw;border-radius:50%;background:conic-gradient(from 200deg,rgba(251,146,60,.28),rgba(244,114,182,.18),rgba(167,139,250,.14),rgba(34,211,238,.18),rgba(251,146,60,.28));filter:blur(70px);opacity:.55;pointer-events:none}
+.cover-title{font-weight:900;font-size:clamp(40px,8.6vh,92px);line-height:1.0;max-width:16ch;margin:14px 0 22px}
+.cover-title .accent{background:linear-gradient(90deg,var(--orange),var(--pink));-webkit-background-clip:text;background-clip:text;color:transparent}
+.pitch{font-size:clamp(16px,2.6vh,23px);max-width:62ch;margin-bottom:clamp(20px,4vh,40px)}
+.cover-meta{display:grid;grid-template-columns:auto 1fr;gap:10px 22px;align-items:center;max-width:980px}
+.cover-meta .k{font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--eyebrow)}
+.cover-actions{display:flex;gap:12px;margin-top:clamp(18px,3.4vh,34px);flex-wrap:wrap}
+.rail-viz{position:absolute;right:calc(var(--pad-x) + 24px);bottom:var(--pad-y);display:flex;gap:8px;opacity:.9}
+.rail-viz div{width:clamp(38px,4.4vw,64px);aspect-ratio:2/3;border-radius:8px;border:1px solid var(--border);background:linear-gradient(160deg,rgba(255,255,255,.08),rgba(255,255,255,.01))}
+.rail-viz div:nth-child(1){background:linear-gradient(160deg,rgba(251,146,60,.55),rgba(251,146,60,.08))}
+.rail-viz div:nth-child(2){background:linear-gradient(160deg,rgba(244,114,182,.45),rgba(244,114,182,.06))}
+.rail-viz div:nth-child(3){background:linear-gradient(160deg,rgba(167,139,250,.45),rgba(167,139,250,.06))}
+.rail-viz div:nth-child(4){background:linear-gradient(160deg,rgba(96,165,250,.45),rgba(96,165,250,.06))}
+.rail-viz div:nth-child(5){background:linear-gradient(160deg,rgba(34,211,238,.45),rgba(34,211,238,.06))}
+.rail-viz div:nth-child(6){background:linear-gradient(160deg,rgba(52,211,153,.45),rgba(52,211,153,.06))}
+
+/* Strategy */
+.strategy{grid-template-columns:1fr 1fr;grid-template-rows:auto 1fr}
+.strategy .card p{font-size:clamp(15px,2.3vh,20px)}
+.callout{grid-column:1 / -1;display:flex;gap:clamp(16px,2.4vw,32px);align-items:center;border-left:4px solid var(--orange)}
+.callout .q{font-family:var(--head);font-weight:900;font-size:clamp(56px,11vh,110px);line-height:.8;color:var(--orange);opacity:.85}
+.callout p{font-family:var(--head);font-weight:600;font-size:clamp(17px,3vh,27px)!important;line-height:1.35}
+.callout mark{background:none;color:var(--orange);font-weight:800}
+
+/* Research */
+.research{grid-template-columns:1.15fr .85fr;grid-template-rows:1fr auto}
+.compare{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
+.compare .c{border:1px solid var(--border);border-radius:14px;padding:12px;background:rgba(255,255,255,.03)}
+.compare .c b{display:block;font-family:var(--head);font-size:clamp(13px,1.9vh,16px)}
+.compare .c span{font-family:var(--mono);font-size:clamp(10px,1.4vh,12px);letter-spacing:.06em}
+.ok{color:var(--teal)} .no{color:var(--pink)}
+.workaround{display:flex;flex-direction:column;gap:10px}
+.wstep{display:flex;gap:12px;align-items:center;border:1px solid var(--border);border-radius:14px;padding:10px 14px;background:rgba(255,255,255,.03)}
+.wstep .n{font-family:var(--mono);color:var(--cyan);font-size:12px}
+.wstep p{font-size:clamp(13px,1.9vh,16px)}
+.journey{grid-column:1 / -1}
+.track{display:grid;grid-template-columns:1fr 1fr 1.25fr 1fr;gap:0;position:relative;margin-top:6px}
+.track::before{content:"";position:absolute;left:4%;right:4%;top:22px;height:2px;background:linear-gradient(90deg,var(--blue),var(--violet),var(--pink) 60%,rgba(244,114,182,.3))}
+.stage{text-align:center;padding:0 8px;position:relative}
+.stage .node{width:44px;height:44px;margin:0 auto 10px;border-radius:50%;display:grid;place-items:center;background:var(--bg);border:2px solid var(--blue);font-family:var(--mono);font-size:13px}
+.stage b{font-family:var(--head);font-size:clamp(14px,2vh,17px);display:block}
+.stage small{font-family:var(--mono);font-size:clamp(10px,1.4vh,12px);letter-spacing:.06em;color:rgba(255,255,255,.7)}
+.stage.misery .node{border-color:var(--pink);background:rgba(244,114,182,.15);box-shadow:0 0 0 6px rgba(244,114,182,.15),0 0 24px rgba(244,114,182,.5)}
+.stage.misery b{color:var(--pink)}
+.insert{margin:12px auto 0;display:inline-block;font-family:var(--mono);font-size:clamp(10px,1.4vh,12px);letter-spacing:.08em;text-transform:uppercase;padding:6px 10px;border-radius:999px;background:rgba(251,146,60,.15);border:1px solid var(--orange);color:var(--eyebrow)}
+.journey-note{margin-top:14px;font-size:clamp(13px,1.9vh,16px)}
+
+/* Blueprint */
+.blueprint{grid-template-columns:repeat(4,1fr);grid-template-rows:auto auto}
+.mcol{border-radius:16px;border:1px solid var(--border);padding:clamp(14px,2.2vh,20px);background:rgba(255,255,255,.03);border-top:3px solid var(--c)}
+.mcol .tag{font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--c);margin-bottom:8px}
+.mcol p{font-family:var(--head);font-weight:600;font-size:clamp(14px,2.1vh,18px)}
+.mcol.must{background:linear-gradient(160deg,rgba(251,146,60,.16),rgba(251,146,60,.02));box-shadow:0 14px 34px -16px rgba(0,0,0,.7)}
+.roadline{grid-column:1/-1;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.nnl{display:flex;gap:8px;flex-wrap:wrap}
+.prd{grid-column:1/-1;display:grid;grid-template-columns:1.6fr 1fr;gap:clamp(14px,2vw,26px);align-items:center}
+.prd ul{list-style:none;display:grid;gap:8px}
+.prd li{display:flex;gap:10px;font-size:clamp(14px,2vh,17px)}
+.prd li::before{content:"";flex:none;width:8px;height:8px;margin-top:.55em;border-radius:2px;background:var(--cyan)}
+.proto{display:flex;flex-direction:column;gap:10px;align-items:flex-start}
+
+/* Validation */
+.exp{display:grid;grid-template-columns:repeat(6,1fr);gap:clamp(10px,1.8vh,18px);flex:1;min-height:0}
+.exp .hyp{grid-column:1/-1}
+.exp .hyp p{font-family:var(--head);font-weight:600;font-size:clamp(15px,2.4vh,21px)}
+.cv{grid-column:span 3}
+.arm{display:flex;gap:12px;align-items:center}
+.arm .badge{font-family:var(--mono);font-size:12px;padding:4px 10px;border-radius:999px;border:1px solid}
+.metric{grid-column:span 4;display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:14px;align-items:end}
+.big{font-family:var(--mono);font-weight:500;font-size:clamp(28px,5.4vh,52px);line-height:1}
+.sub{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.7);margin-top:6px}
+.guard{grid-column:span 2}
+.rules{grid-column:1/-1;display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(10px,1.6vw,18px)}
+.rule{border-radius:14px;padding:14px 16px;border:1px solid var(--c);background:color-mix(in srgb,var(--c) 12%,transparent)}
+.rule .t{font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--c);margin-bottom:4px}
+.rule p{font-family:var(--head);font-weight:600}
+.meta-row{display:flex;gap:8px;flex-wrap:wrap}
+
+/* Launch */
+.launch{grid-template-columns:1.05fr 1fr;flex:1;min-height:0}
+.gtm-grid{display:grid;grid-template-columns:auto 1fr;gap:10px 16px;align-items:start;margin-bottom:12px}
+.gtm-grid .k{font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--eyebrow);padding-top:3px}
+.gtm-grid .v{font-size:clamp(14px,2vh,17px)}
+.tier{display:inline-grid;place-items:center;width:34px;height:34px;border-radius:10px;background:var(--orange);color:#07162C;font-family:var(--head);font-weight:900;margin-right:8px;vertical-align:middle}
+.pills{display:flex;flex-wrap:wrap;gap:8px}
+.enable{list-style:none;display:grid;gap:7px;margin-top:4px}
+.enable li{display:flex;gap:10px;font-size:clamp(13px,1.85vh,16px)}
+.enable li .n{font-family:var(--mono);color:var(--cyan);font-size:12px;padding-top:2px}
+.dash{display:flex;flex-direction:column;gap:clamp(10px,1.6vh,16px)}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:clamp(10px,1.6vh,16px)}
+.tile{border-radius:16px;border:1px solid var(--border);padding:16px;background:linear-gradient(160deg,rgba(255,255,255,.06),rgba(255,255,255,.01));box-shadow:0 14px 34px -16px rgba(0,0,0,.7)}
+.tile .name{font-family:var(--head);font-weight:700;font-size:clamp(14px,2vh,17px);margin:4px 0 10px}
+.spark{height:38px;width:100%}
+.tile .foot{display:flex;justify-content:space-between;font-family:var(--mono);font-size:11px;letter-spacing:.06em;color:rgba(255,255,255,.75);margin-top:8px}
+.bad{border-radius:16px;padding:16px 18px;border:1px solid var(--pink);background:linear-gradient(135deg,rgba(244,114,182,.16),rgba(244,114,182,.04));display:flex;gap:14px;align-items:flex-start}
+.bad .ic{flex:none;width:34px;height:34px;border-radius:10px;display:grid;place-items:center;background:var(--pink);color:#07162C;font-weight:900;font-family:var(--head)}
+.bad .t{font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--pink);margin-bottom:4px}
+.bad p{font-size:clamp(14px,2vh,17px)}
+
+/* Story */
+.story{grid-template-columns:1fr 1fr;flex:1;min-height:0}
+.aha{margin-top:14px;border-radius:14px;padding:16px 18px;background:linear-gradient(135deg,rgba(251,146,60,.2),rgba(167,139,250,.1));border:1px solid var(--orange)}
+.aha .t{font-family:var(--head);font-weight:900;font-size:clamp(20px,3.4vh,30px);color:var(--orange);margin-bottom:6px}
+.aha p{font-family:var(--head);font-weight:600}
+.next{margin-top:14px;border-radius:14px;padding:16px 18px;border:1px solid var(--teal);background:rgba(52,211,153,.08)}
+.next .t{font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--teal);margin-bottom:6px}
+.checks{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+
+/* Thanks */
+#thanks{justify-content:center;align-items:center;text-align:center}
+#thanks h2{font-size:clamp(48px,11vh,120px);font-weight:900;margin:12px 0 18px}
+#thanks h2 span{background:linear-gradient(90deg,var(--orange),var(--pink),var(--violet));-webkit-background-clip:text;background-clip:text;color:transparent}
+.submit{display:inline-flex;align-items:center;gap:12px;padding:14px 24px;border-radius:999px;background:linear-gradient(90deg,var(--orange),#f97316);color:#07162C;font-family:var(--head);font-weight:800;font-size:clamp(15px,2.3vh,19px);box-shadow:0 16px 36px -12px rgba(251,146,60,.85);margin-top:clamp(18px,3.4vh,32px)}
+.submit .pulse{width:10px;height:10px;border-radius:50%;background:#07162C;animation:pulse 1.6s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(7,22,44,.6)}70%{box-shadow:0 0 0 10px rgba(7,22,44,0)}100%{box-shadow:0 0 0 0 rgba(7,22,44,0)}}
+.thanks-meta{display:flex;flex-direction:column;align-items:center;gap:12px}
+
+/* Reveal */
+.reveal{opacity:0;transform:translateY(14px);transition:opacity .6s ease,transform .6s ease}
+section.in .reveal{opacity:1;transform:none}
+section.in .reveal:nth-child(2){transition-delay:.08s}
+section.in .reveal:nth-child(3){transition-delay:.16s}
+section.in .reveal:nth-child(4){transition-delay:.24s}
+section.in .reveal:nth-child(5){transition-delay:.32s}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.reveal{opacity:1;transform:none;transition:none}.submit .pulse{animation:none}}
+@media (max-width:900px){
+  section{height:auto;min-height:100vh}
+  .strategy,.research,.blueprint,.launch,.story,.prd,.exp,.rules,.metric,.tiles{grid-template-columns:1fr!important}
+  .cv,.metric,.guard{grid-column:1/-1}
+  .rail-viz,#hint{display:none}
+}
+@media print{html{scroll-snap-type:none}section{page-break-after:always;height:100vh}#dots,#progress,#hint{display:none}.reveal{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+
+<div id="progress" aria-hidden="true"></div>
+<nav id="dots" aria-label="Slide navigation"></nav>
+<div id="hint" aria-hidden="true"><kbd>↑</kbd><kbd>↓</kbd> navigate · <kbd>Space</kbd> next · <kbd>Esc</kbd> cover</div>
+
+<!-- 1. COVER -->
+<section id="cover" data-title="Cover">
+  <div class="eyebrow reveal">Product School · Final Project · Product Management Certification</div>
+  <h1 class="cover-title reveal">StreamLine Spotlight, <span class="accent">A Personalised Discovery Rail</span></h1>
+  <p class="pitch reveal">Turn an overwhelming home screen into 30-minute listening sessions with a Spotlight rail that tells each Explorer why they will love a title.</p>
+  <div class="cover-meta reveal">
+    <span class="k">Presenter</span><span>Biplab Bhattacharya · Product Management Cohort · Jun 2026</span>
+    <span class="k">Repo</span><a class="url" href="https://github.com/biplabbhattacharya/pm-final-project" target="_blank" rel="noopener noreferrer">https://github.com/biplabbhattacharya/pm-final-project</a>
+    <span class="k">Prototype</span><a class="url" href="https://github.com/biplabbhattacharya/pm-final-project/blob/main/04-roadmap/streamline_spotlight_roadmap.html" target="_blank" rel="noopener noreferrer">https://github.com/biplabbhattacharya/pm-final-project/blob/main/04-roadmap/streamline_spotlight_roadmap.html</a>
+  </div>
+  <div class="cover-actions reveal">
+    <a class="btn" href="https://github.com/biplabbhattacharya/pm-final-project/blob/main/04-roadmap/streamline_spotlight_roadmap.html" target="_blank" rel="noopener noreferrer">View prototype
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M7 17L17 7M8 7h9v9"/></svg></a>
+    <a class="btn ghost" href="https://github.com/biplabbhattacharya/pm-final-project" target="_blank" rel="noopener noreferrer">Open repo</a>
+  </div>
+  <div class="rail-viz" aria-hidden="true"><div></div><div></div><div></div><div></div><div></div><div></div></div>
+</section>
+
+<!-- 2. STRATEGY -->
+<section id="strategy" data-title="05 Strategy">
+  <div class="slide-head reveal">
+    <div><div class="eyebrow">Slide 05 · Strategy</div><h2>Why discovery is broken for Explorers</h2></div>
+    <div class="slide-no">05 / 10</div>
+  </div>
+  <div class="grid strategy grow">
+    <div class="card key reveal">
+      <div class="label"><i style="background:var(--pink)"></i>Problem statement hook</div>
+      <p>Casual Explorers or Wanderers open StreamLine to unwind but bounce from a generic, algorithm-only home screen. "Nothing to play" is the #1 reason cited for short, sub-10-minute sessions and fewer 30+ minute sessions</p>
+    </div>
+    <div class="card key reveal">
+      <div class="label"><i style="background:var(--teal)"></i>Value proposition</div>
+      <p>Spotlight reframes discovery from endless scrolling into a curated, reasoned shortlist, six titles, each with a one-line "why you will love this" so the choice feels effortless.</p>
+    </div>
+    <div class="card hero callout reveal">
+      <div class="q" aria-hidden="true">“</div>
+      <div>
+        <div class="label"><i></i>Data-backed hypothesis</div>
+        <p>We believe a personalised Spotlight rail for Casual Explorers will increase the share of 30-minute sessions started from discovery, measured by a <mark>+4pt lift within 2 months</mark>, without power user numbers.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 3. RESEARCH -->
+<section id="research" data-title="06 Research">
+  <div class="slide-head reveal">
+    <div><div class="eyebrow">Slide 06 · Research</div><h2>How Explorers cope today</h2></div>
+    <div class="slide-no">06 / 10</div>
+  </div>
+  <div class="grid research grow">
+    <div class="card key reveal">
+      <div class="label"><i style="background:var(--violet)"></i>Competitive analysis</div>
+      <p>Netflix "Top Picks" and Spotify "Made For You" both frame recommendations with an explicit reason; StreamLine surfaces titles with no rationale.</p>
+      <div class="compare">
+        <div class="c"><b>Netflix</b><span>"Top Picks"</span><br><span class="ok">● Explicit reason</span></div>
+        <div class="c"><b>Spotify</b><span>"Made For You"</span><br><span class="ok">● Explicit reason</span></div>
+        <div class="c" style="border-color:rgba(244,114,182,.5)"><b>StreamLine</b><span>Home rows</span><br><span class="no">● No rationale</span></div>
+      </div>
+    </div>
+    <div class="card key reveal">
+      <div class="label"><i style="background:var(--cyan)"></i>Current workaround</div>
+      <p style="margin-bottom:12px">Today Explorers cope by leaving to TikTok / YouTube for recommendations, then returning to StreamLine to search manually.</p>
+      <div class="workaround">
+        <div class="wstep"><span class="n">01</span><p>Leave to TikTok / YouTube for recommendations</p></div>
+        <div class="wstep"><span class="n">02</span><p>Return to StreamLine to search manually</p></div>
+      </div>
+    </div>
+    <div class="card journey reveal">
+      <div class="label"><i style="background:var(--pink)"></i>Journey map · moment of misery</div>
+      <div class="track">
+        <div class="stage"><div class="node">1</div><b>Open app</b><small>Wants to unwind</small></div>
+        <div class="stage"><div class="node">2</div><b>Scan three generic rows</b><small>No rationale shown</small></div>
+        <div class="stage misery"><div class="node">!</div><b>Hesitate</b><small>The moment of misery</small><br><span class="insert">▲ Spotlight inserts here</span></div>
+        <div class="stage"><div class="node" style="border-color:rgba(244,114,182,.5)">4</div><b>Bounce</b><small>Session ends</small></div>
+      </div>
+      <p class="journey-note">Open app → scan three generic rows → hesitate (the moment of misery) → bounce. Spotlight inserts a reasoned shortlist exactly at the hesitation point, before the user gives up.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 4. BLUEPRINT -->
+<section id="blueprint" data-title="07 Blueprint">
+  <div class="slide-head reveal">
+    <div><div class="eyebrow">Slide 07 · Blueprint</div><h2>What we build first, and what we don't</h2></div>
+    <div class="slide-no">07 / 10</div>
+  </div>
+  <div class="grid blueprint grow" style="align-content:start">
+    <div class="mcol must reveal" style="--c:var(--orange)"><div class="tag">Must</div><p>Pinned Spotlight rail + "why you will love this" reason</p></div>
+    <div class="mcol reveal" style="--c:var(--cyan)"><div class="tag">Should</div><p>Taste-profile tuning controls</p></div>
+    <div class="mcol reveal" style="--c:var(--violet)"><div class="tag">Could</div><p>Social-proof badges</p></div>
+    <div class="mcol reveal" style="--c:var(--pink)"><div class="tag">Won’t (now)</div><p>Full home-screen redesign</p></div>
+    <div class="roadline reveal">
+      <span class="label" style="margin:0"><i style="background:var(--blue)"></i>Roadmap</span>
+      <div class="nnl">
+        <span class="pill"><span class="d" style="background:var(--orange)"></span>Now · V1 rail in 6 weeks</span>
+        <span class="pill"><span class="d" style="background:var(--cyan)"></span>Next</span>
+        <span class="pill"><span class="d" style="background:var(--violet)"></span>Later</span>
+      </div>
+      <span style="font-size:clamp(13px,1.9vh,16px)">Now/Next/Later roadmap ships a V1 rail in 6 weeks.</span>
+    </div>
+    <div class="card hero prd reveal">
+      <div>
+        <div class="label"><i></i>PRD highlights</div>
+        <ul>
+          <li>A pinned top rail of 6 personalised titles, each with a single AI-generated one-line reason.</li>
+          <li>No other home-screen changes in V1.</li>
+          <li>Falls back to the existing editorial row if the taste profile is empty.</li>
+        </ul>
+      </div>
+      <div class="proto">
+        <div class="label" style="margin:0"><i style="background:var(--teal)"></i>Prototype</div>
+        <a class="btn" href="https://github.com/biplabbhattacharya/pm-final-project/blob/main/04-roadmap/streamline_spotlight_roadmap.html" target="_blank" rel="noopener noreferrer">View prototype
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M7 17L17 7M8 7h9v9"/></svg></a>
+        <span class="url" style="border:none;opacity:.75">04-roadmap/streamline_spotlight_roadmap.html</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 5. VALIDATION -->
+<section id="validation" data-title="08 Validation">
+  <div class="slide-head reveal">
+    <div><div class="eyebrow">Slide 08 · Validation</div><h2>Experiment plan</h2></div>
+    <div class="meta-row reveal">
+      <span class="pill"><span class="d" style="background:var(--blue)"></span>A/B test</span>
+      <span class="pill"><span class="d" style="background:var(--violet)"></span>50/50 split</span>
+      <span class="pill"><span class="d" style="background:var(--cyan)"></span>14 days</span>
+    </div>
+  </div>
+  <div class="exp">
+    <div class="card hero hyp reveal">
+      <div class="label"><i></i>Hypothesis</div>
+      <p>We believe a personalised Spotlight rail for Casual Explorers will increase the share of 30-minute sessions started from discovery, measured by a +4pt lift within 2 months, without power user numbers.</p>
+    </div>
+    <div class="card cv reveal">
+      <div class="label"><i style="background:var(--blue)"></i>Control · 50%</div>
+      <div class="arm"><span class="badge" style="border-color:var(--blue);color:var(--blue)">A</span><p>Existing home screen</p></div>
+    </div>
+    <div class="card cv reveal" style="border-color:rgba(251,146,60,.55)">
+      <div class="label"><i></i>Variant · 50%</div>
+      <div class="arm"><span class="badge" style="border-color:var(--orange);color:var(--orange)">B</span><p>Pinned Spotlight rail with "why you will love this" reasons</p></div>
+    </div>
+    <div class="card key metric reveal">
+      <div>
+        <div class="label"><i style="background:var(--teal)"></i>Primary metric</div>
+        <p style="font-family:var(--head);font-weight:700">Share of 30-minute sessions started from discovery</p>
+      </div>
+      <div><div class="big">11%</div><div class="sub">Baseline</div></div>
+      <div><div class="big" style="color:var(--teal)">+4pt</div><div class="sub">MDE</div></div>
+    </div>
+    <div class="card key guard reveal" style="border-color:rgba(244,114,182,.5)">
+      <div class="label"><i style="background:var(--pink)"></i>Guardrail</div>
+      <div class="big" style="color:var(--pink)">≥ 22%</div>
+      <div class="sub">Power user proportion must not drop below 22%</div>
+    </div>
+    <div class="rules reveal">
+      <div class="rule" style="--c:var(--teal)"><div class="t">Ship</div><p>If primary hits with guardrail safe</p></div>
+      <div class="rule" style="--c:var(--cyan)"><div class="t">Iterate</div><p>If flat</p></div>
+      <div class="rule" style="--c:var(--pink)"><div class="t">Kill</div><p>If retention regresses</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 6. LAUNCH -->
+<section id="launch" data-title="09 Launch">
+  <div class="slide-head reveal">
+    <div><div class="eyebrow">Slide 09 · Launch</div><h2>Go-to-market and how we'll know it's working</h2></div>
+    <div class="slide-no">09 / 10</div>
+  </div>
+  <div class="grid launch">
+    <div class="card key reveal">
+      <div class="label"><i></i>GTM strategy</div>
+      <div class="gtm-grid">
+        <span class="k">Goal</span><span class="v"><span class="pill"><span class="d" style="background:var(--teal)"></span>Engagement</span></span>
+        <span class="k">Audience</span><span class="v">Existing Casual Explorers and Wanderers who have not adopted discovery.</span>
+        <span class="k">Tier</span><span class="v"><span class="tier">M</span>Medium</span>
+        <span class="k">Channels</span><span class="v pills">
+          <span class="pill"><span class="d" style="background:var(--orange)"></span>Email (owned)</span>
+          <span class="pill"><span class="d" style="background:var(--orange)"></span>In-app announcement (owned)</span>
+          <span class="pill"><span class="d" style="background:var(--cyan)"></span>Lifecycle email (owned)</span>
+          <span class="pill"><span class="d" style="background:var(--violet)"></span>Lifecycle push</span>
+        </span>
+      </div>
+      <div class="label" style="margin-top:6px"><i style="background:var(--cyan)"></i>Enablement</div>
+      <ul class="enable">
+        <li><span class="n">01</span>Launch email announcing feature release to a small group.</li>
+        <li><span class="n">02</span>In-app onboarding tutorial sequence introducing the Spotlight Curated Rail.</li>
+        <li><span class="n">03</span>One-pager for Social Media partners explaining the product and key messaging.</li>
+      </ul>
+    </div>
+    <div class="dash reveal">
+      <div class="label" style="margin:0"><i style="background:var(--teal)"></i>Success metrics dashboard</div>
+      <div class="tiles">
+        <div class="tile">
+          <div class="sub" style="margin:0">Primary</div>
+          <div class="name">Sessions reaching 30+ min</div>
+          <svg class="spark" viewBox="0 0 200 40" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="g1" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#34d399" stop-opacity=".45"/><stop offset="1" stop-color="#34d399" stop-opacity="0"/></linearGradient></defs><path d="M0 32 L25 30 L50 31 L75 26 L100 24 L125 20 L150 17 L175 12 L200 9 L200 40 L0 40Z" fill="url(#g1)"/><path d="M0 32 L25 30 L50 31 L75 26 L100 24 L125 20 L150 17 L175 12 L200 9" fill="none" stroke="#34d399" stroke-width="2"/></svg>
+          <div class="foot"><span>Baseline 11%</span><span style="color:var(--teal)">MDE +4pt</span></div>
+        </div>
+        <div class="tile">
+          <div class="sub" style="margin:0">Secondary</div>
+          <div class="name">Content searched then played</div>
+          <svg class="spark" viewBox="0 0 200 40" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="g2" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#60a5fa" stop-opacity=".45"/><stop offset="1" stop-color="#60a5fa" stop-opacity="0"/></linearGradient></defs><path d="M0 26 L25 25 L50 27 L75 23 L100 24 L125 21 L150 22 L175 19 L200 18 L200 40 L0 40Z" fill="url(#g2)"/><path d="M0 26 L25 25 L50 27 L75 23 L100 24 L125 21 L150 22 L175 19 L200 18" fill="none" stroke="#60a5fa" stroke-width="2"/></svg>
+          <div class="foot"><span>Baseline: to be set at launch</span><span>Monitor</span></div>
+        </div>
+      </div>
+      <div class="tile" style="padding:14px 16px;display:flex;justify-content:space-between;align-items:center">
+        <div><div class="sub" style="margin:0">Guardrail</div><div class="name" style="margin:4px 0 0">Power user proportion</div></div>
+        <div style="text-align:right"><div class="big" style="font-size:clamp(22px,3.6vh,34px);color:var(--pink)">≥ 22%</div></div>
+      </div>
+      <div class="bad">
+        <div class="ic">!</div>
+        <div>
+          <div class="t">Bad signal to watch for</div>
+          <p>Drop in Power users or Content searched then played or sessions reaching 30+ min for treatment group.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 7. STORY -->
+<section id="story" data-title="10 Story">
+  <div class="slide-head reveal">
+    <div><div class="eyebrow">Slide 10 · Story</div><h2>What I learned building Spotlight</h2></div>
+    <div class="slide-no">10 / 10</div>
+  </div>
+  <div class="grid story">
+    <div class="card key reveal">
+      <div class="label"><i style="background:var(--pink)"></i>Friction points</div>
+      <p>It was hard to decide the right persona to solve for and the right primary metric to design for.</p>
+      <div class="aha">
+        <div class="t">The Aha! moment</div>
+        <p>The Aha! moment happened when I realized that one feature doesn't have to solve all problems, I just need to decide my feature based on persona, primary metric, guardrail metric and then revisit this to find other features that solve other issues.</p>
+      </div>
+    </div>
+    <div class="card key reveal">
+      <div class="label"><i style="background:var(--teal)"></i>Key takeaways</div>
+      <p>It was surprising how many times I double/triple checked if the persona, primary metric, guardrail metric was what I want to develop for.</p>
+      <div class="checks">
+        <span class="pill"><span class="d" style="background:var(--orange)"></span>Persona</span>
+        <span class="pill"><span class="d" style="background:var(--teal)"></span>Primary metric</span>
+        <span class="pill"><span class="d" style="background:var(--pink)"></span>Guardrail metric</span>
+      </div>
+      <div class="next">
+        <div class="t">What I would do next</div>
+        <p>Next I will design features that solve for rest of the issues surfaced through discovery</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 8. THANK YOU / SUBMIT -->
+<section id="thanks" data-title="Thank you">
+  <div class="eyebrow reveal">StreamLine Spotlight · Final Project</div>
+  <h2 class="reveal"><span>Thank you</span></h2>
+  <div class="thanks-meta reveal">
+    <span class="pill"><span class="d" style="background:var(--orange)"></span>Biplab Bhattacharya · Product Management Cohort · Jun 2026</span>
+    <a class="url" href="https://github.com/biplabbhattacharya/pm-final-project" target="_blank" rel="noopener noreferrer">https://github.com/biplabbhattacharya/pm-final-project</a>
+  </div>
+  <div class="reveal"><span class="submit"><span class="pulse"></span>Submit to the learning platform</span></div>
+</section>
+
+<script>
+(function(){
+  var sections=[].slice.call(document.querySelectorAll('section'));
+  var dots=document.getElementById('dots');
+  var bar=document.getElementById('progress');
+  var current=0;
+  sections.forEach(function(s,i){
+    var a=document.createElement('a');
+    a.href='#'+s.id;a.setAttribute('aria-label',s.dataset.title);
+    a.innerHTML='<span>'+s.dataset.title+'</span>';
+    a.addEventListener('click',function(e){e.preventDefault();go(i);});
+    dots.appendChild(a);
+  });
+  var dotEls=[].slice.call(dots.children);
+  function go(i){
+    i=Math.max(0,Math.min(sections.length-1,i));
+    sections[i].scrollIntoView({behavior:'smooth',block:'start'});
+  }
+  function setActive(i){
+    current=i;
+    dotEls.forEach(function(d,j){d.classList.toggle('active',j===i);});
+  }
+  var io=new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting&&e.intersectionRatio>0.5){
+        e.target.classList.add('in');
+        setActive(sections.indexOf(e.target));
+      }
+    });
+  },{threshold:[0.5]});
+  sections.forEach(function(s){io.observe(s);});
+  function progress(){
+    var h=document.documentElement;
+    var max=h.scrollHeight-h.clientHeight;
+    bar.style.width=(max>0?(h.scrollTop/max)*100:0)+'%';
+  }
+  window.addEventListener('scroll',progress,{passive:true});
+  window.addEventListener('resize',progress);
+  progress();
+  document.addEventListener('keydown',function(e){
+    if(e.target.closest&&e.target.closest('input,textarea,[contenteditable]'))return;
+    switch(e.key){
+      case 'ArrowDown':case 'PageDown':e.preventDefault();go(current+1);break;
+      case 'ArrowUp':case 'PageUp':e.preventDefault();go(current-1);break;
+      case ' ':case 'Spacebar':e.preventDefault();go(e.shiftKey?current-1:current+1);break;
+      case 'Home':e.preventDefault();go(0);break;
+      case 'End':e.preventDefault();go(sections.length-1);break;
+      case 'Escape':case 'Esc':e.preventDefault();go(0);break;
+    }
+  });
+  sections[0].classList.add('in');setActive(0);
+})();
+</script>
+</body>
+</html>
